@@ -15,6 +15,7 @@ namespace aspnetcoreapp
             await hub.StartAsync();
             var cardMap = await hub.InvokeAsync<string>("GetCardMap");
             File.WriteAllText($"test.json", cardMap);
+            await hub.StopAsync();
         }
     }
 }
