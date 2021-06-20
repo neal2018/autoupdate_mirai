@@ -1,26 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.SignalR.Client;
+using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace aspnetcoreapp
 {
     public class Program
     {
-        public static void Main(string[] args)
+        static async Task Main()
         {
-            CreateHostBuilder(args).Build().Run();
+            var IP = Dns.GetHostEntry("cynthia.ovyno.com").AddressList[0];
+            var hub = new HubConnectionBuilder().WithUrl($"http://{IP}:5005/hub/gwent").Build();
+            await hub.StartAsync();
+            var cardMap = await hub.InvokeAsync<string>("GetCardMap");
+            File.WriteAllText($"test.json", cardMap);
         }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
     }
 }
